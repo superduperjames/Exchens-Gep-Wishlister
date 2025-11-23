@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>🎄 Christmas Wishlist Mirror 🎁</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Mountains+of+Christmas&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
+
+    body {
+      font-family: 'Mountains of Christmas', cursive;
+      background: url('https://i.gifer.com/origin/f6/f66b4d51e489a887fa9f1bfb89f9e1ea_w200.gif') no-repeat center center fixed;
+      background-size: cover;
+      margin: 0;
+      padding: 0;
+      color: #fff;
+    }
+
+    .header {
+      position: fixed;
+      top: 10px;
+      right: 20px;
+      z-index: 1000;
+    }
+
+    .login-btn {
+      background-color: transparent;
+      color: #FFD700;
+      cursor: pointer;
+      font-weight: bold;
+      text-decoration: underline;
+      border: none;
+      font-size: 16px;
+      font-family: 'Mountains of Christmas', cursive;
+      transition: all 0.3s ease;
+    }
+
+    .login-btn:hover {
+      background-color: rgba(255, 255, 255, 0.2);
+      color: #FF4500;
+    }
+
+    .container {
+      max-width: 700px;
+      margin: 180px auto;
+      background: rgba(0, 50, 0, 0.8);
+      padding: 25px;
+      border-radius: 15px;
+      text-align: center;
+      box-shadow: 0 2px 15px rgba(0, 0, 0, 0.4);
+    }
+
+    h2, h3 {
+      color: #FFD700;
+      text-shadow: 1px 1px 3px #000;
+    }
+
+    input {
+      width: 70%;
+      padding: 14px;
+      margin: 8px 0;
+      border-radius: 10px;
+      border: none;
+      font-size: 18px;
+      text-align: center;
+    }
+
+    button {
+      background-color: #B22222;
+      color: #fff;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.3s;
+      width: auto;
+      min-width: 120px;
+      padding: 12px 20px;
+      margin: 5px 5px 0 0;
+      border-radius: 12px;
+      font-size: 18px;
+    }
+
+    button:hover {
+      background-color: #FF6347;
+    }
+
+    #result {
+      margin-top: 20px;
+      background: rgba(0, 50, 0, 0.7);
+      padding: 15px;
+      border-radius: 10px;
+      opacity: 0;
+      transition: opacity 0.8s ease;
+      font-size: 18px;
+      font-family: 'Poppins', sans-serif;
+      text-align: left;
+    }
+
+    #result a {
+      color: #FFD700;
+      text-decoration: underline;
+    }
+
+    #result.visible {
+      opacity: 1;
+    }
+
+    #adminSection {
+      display: none;
+    }
+
+    #downloadBtn, #emailBtn {
+      display: none;
+      background-color:#B22222;
+      color: white;
+      border: none;
+      border-radius: 12px;
+      padding: 12px 20px;
+      cursor: pointer;
+      font-size: 18px;
+      font-family: 'Mountains of Christmas', cursive;
+      transition: 0.3s;
+    }
+
+    #downloadBtn:hover, #emailBtn:hover {
+      background-color: #FFD700;
+      color: #B22222;
+    }
+
+    .admin-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 15px;
+    }
+
+    .admin-buttons button,
+    .admin-buttons a {
+      background-color:transparent;
+      color: #FFD700;
+      text-decoration: none;
+      padding: 12px 20px;
+      border-radius: 12px;
+      display: inline-block;
+      font-weight: bold;
+      transition: 0.3s;
+      border: none;
+      cursor: pointer;
+      font-family: 'Mountains of Christmas', cursive;
+      font-size: 18px;
+    }
+
+    .admin-buttons button:hover,
+    .admin-buttons a:hover {
+      background-color: #228B22;
+    }
+
+    .button-group {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <button class="login-btn" onclick="showLogin()">Admin Login</button>
+  </div>
+
+  <div class="container">
+    <h2>🎄 The Christmas Wishlist Mirror 🎁</h2>
+    <p>Discover the secret wishes of your friends and spread the joy of giving this holiday season!</p>
+    <input type="text" id="codeName" placeholder="Enter Code Name" />
+    <button onclick="lookupWish()">Reveal Your Gifts!</button>
+
+    <div id="result"></div>
+    <div class="button-group">
+      <button id="downloadBtn" onclick="downloadCSV()">⬇️ Download as CSV</button>
+      <button id="emailBtn" onclick="emailResult()">📧 Email Results</button>
+    </div>
+  </div>
+
+  <div class="container" id="adminSection">
+    <h3>Add New Entry</h3>
+    <input type="text" id="newCodeName" placeholder="Code Name" />
+    <input type="text" id="wish1" placeholder="Wish 1" />
+    <input type="text" id="wish2" placeholder="Wish 2" />
+    <input type="text" id="wish3" placeholder="Wish 3" />
+    <button onclick="addEntry(event)">Add Entry</button>
+
+    <div class="admin-buttons">
+      <a href="https://docs.google.com/spreadsheets/d/1sW56Wuxpk7gsCHKQ4gMSdCF9NF1i2RvCDdDSdJVvUhM/edit?gid=0#gid=0" target="_blank">📜 See List</a>
+      <button onclick="closeAdmin()">Close Admin Panel</button>
+    </div>
+
+    <p id="adminMessage"></p>
+  </div>
+
+  <script>
+    // Your JavaScript stays the same
+  </script>
+</body>
+</html>
