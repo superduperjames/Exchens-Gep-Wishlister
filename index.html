@@ -200,7 +200,135 @@
   </div>
 
   <script>
-    // Your JavaScript stays the same
+    const scriptURL = "https://script.google.com/macros/s/AKfycbyfb5wWBN-AmxoHddl6gBWX9zf8tBwcEU7TIAC7PNU7HJQA9y4B4BYUe8di1Jg-bV4H/exec";
+    let currentWishData = null;
+
+    function makeLinkIfURL(text) {
+      const urlPattern = /(https?:\/\/[^\s]+)/g;
+      return text.replace(urlPattern, function(url) {
+        return `<a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a>`;
+      });
+    }
+
+    async function lookupWish() {
+      const codeName = document.getElementById("codeName").value.trim();
+      const resultDiv = document.getElementById("result");
+      const downloadBtn = document.getElementById("downloadBtn");
+      const emailBtn = document.getElementById("emailBtn");
+
+      if (!codeName) { alert("Please enter a Code Name"); return; }
+
+      resultDiv.innerHTML = "<p>Loading results... hang tight...</p>";
+      resultDiv.classList.add("visible");
+      downloadBtn.style.display = "none";
+      emailBtn.style.display = "none";
+
+      try {
+        const response = await fetch(`${scriptURL}?action=lookup&codeName=${encodeURIComponent(codeName)}`);
+        if (!response.ok) throw new Error("Network response was not ok");
+        const data = await response.json();
+
+        resultDiv.classList.remove("visible");
+
+        if (data && data.found) {
+          resultDiv.innerHTML = `
+            <h3>✨ ${data.codeName}</h3>
+            <p><strong>Wish 1:🪄 </strong> ${makeLinkIfURL(data.wish1)}</p>
+            <p><strong>Wish 2:🪄 </strong> ${makeLinkIfURL(data.wish2)}</p>
+            <p><strong>Wish 3:🪄 </strong> ${makeLinkIfURL(data.wish3)}</p>
+          `;
+          currentWishData = data;
+          downloadBtn.style.display = "inline-block";
+          emailBtn.style.display = "inline-block";
+        } else {
+          resultDiv.innerHTML = `<p>No data found for "<strong>${codeName}</strong>" 😢</p>`;
+          currentWishData = null;
+          downloadBtn.style.display = "none";
+          emailBtn.style.display = "none";
+        }
+
+        setTimeout(() => resultDiv.classList.add("visible"), 100);
+        resultDiv.scrollIntoView({ behavior: 'smooth' });
+
+      } catch (error) {
+        resultDiv.innerHTML = `<p>Error fetching data. Please try again.</p>`;
+        downloadBtn.style.display = "none";
+        emailBtn.style.display = "none";
+        console.error(error);
+      }
+    }
+
+    function downloadCSV() {
+      if (!currentWishData) return;
+      const { codeName, wish1, wish2, wish3 } = currentWishData;
+      const today = new Date().toISOString().split('T')[0];
+      const csvContent = `Code Name,Wish 1,Wish 2,Wish 3\n"${codeName}","${wish1}","${wish2}","${wish3}"`;
+      const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = `${codeName}_Wishes_${today}.csv`;
+      link.click();
+    }
+
+    function emailResult() {
+      if (!currentWishData) return;
+      const { codeName, wish1, wish2, wish3 } = currentWishData;
+      const subject = encodeURIComponent(`Your Wishlist Mirror Result for ${codeName}`);
+      const body = encodeURIComponent(
+        `Hello!\n\nHere is the wishlist result:\n\n` +
+        `Code Name: ${codeName}\n` +
+        `Wish 1: ${wish1}\n` +
+        `Wish 2: ${wish2}\n` +
+        `Wish 3: ${wish3}\n\n` +
+        `May you make their wishes come true! ✨`
+      );
+      const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&su=${subject}&body=${body}`;
+      window.open(gmailUrl, "_blank");
+    }
+
+    function showLogin() {
+      const password = prompt("Enter admin password:");
+      if (password === "gips2025") {
+        document.getElementById("adminSection").style.display = "block";
+        window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+      } else { alert("Incorrect password!"); }
+    }
+
+    function closeAdmin() {
+      document.getElementById("adminSection").style.display = "none";
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    async function addEntry(event) {
+      const addBtn = event.target;
+      addBtn.disabled = true; addBtn.innerText = "Adding...";
+
+      const newCodeName = document.getElementById("newCodeName").value.trim();
+      const wish1 = document.getElementById("wish1").value.trim();
+      const wish2 = document.getElementById("wish2").value.trim();
+      const wish3 = document.getElementById("wish3").value.trim();
+
+      if (!newCodeName || !wish1 || !wish2 || !wish3) {
+        alert("Please fill out all fields.");
+        addBtn.disabled = false; addBtn.innerText = "Add Entry";
+        return;
+      }
+
+      const response = await fetch(scriptURL, {
+        method: "POST",
+        body: new URLSearchParams({ action: "add", codeName: newCodeName, wish1, wish2, wish3 })
+      });
+
+      const result = await response.text();
+      document.getElementById("adminMessage").innerText = result;
+
+      document.getElementById("newCodeName").value = "";
+      document.getElementById("wish1").value = "";
+      document.getElementById("wish2").value = "";
+      document.getElementById("wish3").value = "";
+
+      addBtn.disabled = false; addBtn.innerText = "Add Entry";
+    }
   </script>
 </body>
 </html>
