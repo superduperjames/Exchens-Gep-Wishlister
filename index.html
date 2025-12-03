@@ -12,7 +12,7 @@
       font-family: 'Mountains of Christmas', cursive;
       background: url('https://res.cloudinary.com/eventmobi/image/upload/v1764796809/_James%20Assets/.test%20app%20assets/Abstract%20Backgrounds/4764551.jpg') no-repeat center center fixed;
       background-size: contain;
-      background-repeat:repeat;
+      background-repeat: repeat;
       margin: 0;
       padding: 0;
       color: #fff;
@@ -56,9 +56,11 @@
       color: #FFD700;
       text-shadow: 1px 1px 3px #000;
     }
-    h2{
-      text-size:2em;
+
+    h2 {
+      text-size: 2em;
     }
+
     input {
       width: 70%;
       padding: 14px;
@@ -70,7 +72,7 @@
     }
 
     button {
-      background-color:seagreen;
+      background-color: seagreen;
       color: #fff;
       font-weight: bold;
       cursor: pointer;
@@ -97,11 +99,14 @@
       font-size: 18px;
       font-family: 'Poppins', sans-serif;
       text-align: left;
+      word-wrap: break-word;
+      word-break: break-word;
     }
 
     #result a {
       color: #FFD700;
       text-decoration: underline;
+      word-break: break-word;
     }
 
     #result.visible {
@@ -140,7 +145,7 @@
 
     .admin-buttons button,
     .admin-buttons a {
-      background-color:transparent;
+      background-color: transparent;
       color: #FFD700;
       text-decoration: none;
       padding: 12px 20px;
@@ -166,6 +171,41 @@
       gap: 10px;
       margin-top: 10px;
     }
+
+    /* MOBILE RESPONSIVE */
+    @media (max-width: 768px) {
+      .container {
+        margin: 120px 20px;
+        padding: 20px;
+      }
+
+      input, button, #downloadBtn, #emailBtn {
+        width: 100%;
+        min-width: unset;
+      }
+
+      .header {
+        position: static;
+        margin-bottom: 10px;
+        text-align: center;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .container {
+        margin: 80px 10px;
+        padding: 15px;
+      }
+
+      h2 {
+        font-size: 1.5em;
+      }
+
+      input, button, #downloadBtn, #emailBtn {
+        font-size: 16px;
+        padding: 10px;
+      }
+    }
   </style>
 </head>
 <body>
@@ -175,7 +215,7 @@
 
   <div class="container">
     <h2>🎄 Exchens Gips Wislis Meror 🎁</h2>
-    <p>Discover the secret wishes of your  Monito/Monita!</p>
+    <p>Discover the secret wishes of your Monito/Monita!</p>
     <input type="text" id="codeName" placeholder="Enter Code Name" />
     <button onclick="lookupWish()">Reveal Their List!</button>
 
